@@ -1,8 +1,8 @@
-// AdminDashboard.jsx
 import React, { useEffect, useState } from 'react';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -19,7 +19,7 @@ const AdminDashboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch('http://localhost:9000/api/leaderboard');
+      const response = await fetch('http://localhost:9000/api/leaderboard/admin');
       const data = await response.json();
       setUsers(data);
       
@@ -94,6 +94,11 @@ const AdminDashboard = () => {
     }
   };
 
+  // Filter users based on search query
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
@@ -151,7 +156,19 @@ const AdminDashboard = () => {
       </div>
 
       <div className="bg-white shadow-md rounded-lg">
-        <h2 className="text-xl font-semibold p-6">Manage Users</h2>
+        <div className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Manage Users</h2>
+          {/* Search Bar */}
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search users by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+        </div>
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-100">
@@ -164,7 +181,7 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user._id} className="border-t">
                 <td className="px-6 py-4">{user.name}</td>
                 <td className="px-6 py-4">{user.rollNumber}</td>
