@@ -94,6 +94,16 @@ app.get('/api/leaderboard', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+app.get('/api/leaderboard/admin', async (req, res) => {
+  try {
+    const users = await User.find({ isAdmin: false })
+      .sort({ name: 1 })  // 1 for ascending alphabetical order
+      .select('name rollNumber points');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 app.put('/api/users/:userId/points', async (req, res) => {
   const { userId } = req.params;
